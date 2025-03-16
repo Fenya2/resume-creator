@@ -1,0 +1,29 @@
+server:
+  servlet:
+    context-path: /app
+    address: 0.0.0.0
+    port: 8080
+spring:
+  thymeleaf:
+    encoding: UTF-8
+    mode: HTML
+  datasource:
+    url: jdbc:postgresql://localhost:5432/resume_creator
+    username: admin
+    password: 123
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+logging:
+  level:
+    root: INFO         # Устанавливает уровень логирования для корневого логгера. Здесь выводятся сообщения с уровнем INFO и выше.
+    сourse.work: DEBUG # Для пакета com.example включаем более подробное логирование (DEBUG и выше).
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} - %level - %logger - %msg%n"
+    # Определяет формат вывода сообщений в консоль:
+    # %d{...}   - дата и время сообщения;
+    # %level    - уровень логирования (DEBUG, INFO, WARN, ERROR);
+    # %logger{36} - имя логгера (обычно имя класса, обрезается до 36 символов);
+    # %msg      - текст сообщения;
+    # %n        - перевод строки.
