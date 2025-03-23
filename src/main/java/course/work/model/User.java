@@ -4,7 +4,9 @@ import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 
 /**
- * Пользователь приложения
+ * Пользователь приложения. <br>
+ * <br>
+ * Каждый пользователь приложения идентифицируется своим логином
  */
 @Entity
 @Table(name = "tbl_user", indexes = {
@@ -21,7 +23,12 @@ public class User {
     @Nullable
     private String userName;
 
+    @Nullable
     private String password;
+
+    public long getId() {
+        return id;
+    }
 
     public String getLogin() {
         return login;
