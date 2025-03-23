@@ -9,6 +9,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
@@ -27,7 +28,7 @@ public class CustomUserDetailsService implements UserDetailsService {
                 .orElseThrow(() -> new UsernameNotFoundException(USER_NOT_FOUND.formatted(username)));
         return new org.springframework.security.core.userdetails.User(
                 user.getLogin(),
-                user.getPassword(),
+                Objects.requireNonNullElseGet(user.getPassword(), () -> "NO_PASSWORD"),
                 // TODO роли пользователя можно добавить позже
                 List.of()
         );

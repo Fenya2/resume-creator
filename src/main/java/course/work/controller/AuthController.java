@@ -3,11 +3,15 @@ package course.work.controller;
 import course.work.dao.UserRepository;
 import course.work.dto.UserRegisterDto;
 import course.work.model.User;
-import course.work.service.RegistrationService;
-import course.work.service.UserAlreadyExistException;
+import course.work.sec.CustomOAuth2UserService;
+import course.work.sec.SecurityConfig;
+import course.work.service.auth.RegistrationService;
+import course.work.service.auth.UserAlreadyExistException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,7 +29,7 @@ public class AuthController {
         this.userRepository = userRepository;
     }
 
-    @GetMapping("/login")
+    @GetMapping(SecurityConfig.LOGIN_PAGE_ENDPOINT)
     public String loginPage() {
         return "login";
     }
@@ -51,15 +55,29 @@ public class AuthController {
     }
 
     @GetMapping("/")
-    public String homePage(@AuthenticationPrincipal UserDetails userDetails, Model model) {
-        // TODO здесь нужно будет расширяться
-        User user = userRepository.findByLogin(userDetails.getUsername()).orElseThrow();
-        String username = user.getUserName();
-        if (username != null) {
-            model.addAttribute("username", username);
-        } else {
-            model.addAttribute("username", user.getLogin());
+    public String homePage(Authentication authentication, Model model) {
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return "redirect:/login";
         }
+
+        String login = extractLoginFromAuthentication(authentication);
+        User user = userRepository.findByLogin(login).orElseThrow();
+        String username = user.getUserName() != null ? user.getUserName() : user.getLogin();
+
+        model.addAttribute("username", username);
         return "home";
+    }
+
+    private String extractLoginFromAuthentication(Authentication authentication) {
+        if (authentication instanceof OAuth2AuthenticationToken oAuth2Token) {
+            String provider = oAuth2Token.getAuthorizedClientRegistrationId();
+            String sub = oAuth2Token.getPrincipal().getAttribute("sub");
+            return CustomOAuth2UserService.getOauth2UserLogin(provider, sub);
+        }
+        if(authentication instanceof UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken)
+        {
+            return usernamePasswordAuthenticationToken.getName();
+        }
+        throw new IllegalArgumentException("Unknown authorization");
     }
 }

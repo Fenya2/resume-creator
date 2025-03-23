@@ -23,7 +23,6 @@ public class SchemeInitializer {
         this.passwordEncoder = passwordEncoder;
     }
 
-
     @PostConstruct
     public void init() {
         User commonUser = new User();

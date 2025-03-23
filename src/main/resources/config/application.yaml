@@ -3,6 +3,10 @@ server:
     context-path: /app
     address: 0.0.0.0
     port: 8080
+  tomcat:
+    basedir: "tomcat"
+    accesslog:
+      enabled: true
 spring:
   thymeleaf:
     encoding: UTF-8
@@ -15,15 +19,18 @@ spring:
   jpa:
     hibernate:
       ddl-auto: create-drop
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${GOOGLE_CLIENT_ID}
+            client-secret: ${GOOGLE_CLIENT_SECRET}
+            scope: email, profile
+            redirect-uri: http://localhost:8080/app/login/oauth2/code/google
 logging:
   level:
-    root: INFO         # Устанавливает уровень логирования для корневого логгера. Здесь выводятся сообщения с уровнем INFO и выше.
-    сourse.work: DEBUG # Для пакета com.example включаем более подробное логирование (DEBUG и выше).
+    root: INFO
+    сourse.work: DEBUG
   pattern:
     console: "%d{yyyy-MM-dd HH:mm:ss} - %level - %logger - %msg%n"
-    # Определяет формат вывода сообщений в консоль:
-    # %d{...}   - дата и время сообщения;
-    # %level    - уровень логирования (DEBUG, INFO, WARN, ERROR);
-    # %logger{36} - имя логгера (обычно имя класса, обрезается до 36 символов);
-    # %msg      - текст сообщения;
-    # %n        - перевод строки.
