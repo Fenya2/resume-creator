@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" th:href="@{/favicon.ico}" type="image/x-icon">
+    <title th:text="#{app.resume.title} + ' ' + ${resumeDetails.name}"></title>
+</head>
+<body>
+<header>
+    <a th:href="@{/}" th:text="#{app.resume.go_home}"></a>
+    <p th:if="${error}" style="color: red;" th:text="#{app.resume.save_details_error}"></p>
+    <form th:action="@{/resume/{id}/meta(id=${resumeDetails.id})}" method="post">
+        <input type="hidden" name="_method" value="patch">
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+        <input type="text" name="detailsName" th:value="${resumeDetails.name}">
+        <button type="submit" th:text="#{app.resume.save_button}"></button>
+    </form>
+</header>
+<div>
+    <form th:action="@{/resume/{id}(id=${resumeDetails.id})}"
+          method="post" th:object="${resume}"
+          enctype="multipart/form-data">
+        <div>
+            <input type="hidden" name="_method" value="put">
+            <h2 th:text="#{app.resume.general_info}"></h2>
+            <div>
+                <label for="firstName" th:text="#{app.resume.general_info.first_name}"></label>
+                <input type="text" id="firstName" th:field="*{generalInfo.firstName}">
+            </div>
+            <div>
+                <label for="lastName" th:text="#{app.resume.general_info.last_name}"></label>
+                <input type="text" id="lastName" th:field="*{generalInfo.lastName}">
+            </div>
+            <div>
+                <label for="birthday" th:text="#{app.resume.general_info.birthday}"></label>
+                <input type="date" id="birthday" th:field="*{generalInfo.birthday}">
+            </div>
+            <div>
+                <label for="city" th:text="#{app.resume.general_info.city}"></label>
+                <input type="text" id="city" th:field="*{generalInfo.city}">
+            </div>
+            <div>
+                <label for="requiredSalary" th:text="#{app.resume.general_info.required_salary}"></label>
+                <input type="number" id="requiredSalary" th:field="*{generalInfo.requiredSalary}" min="0">
+            </div>
+            <div>
+                <label for="photo" th:text="#{app.resume.general_info.photo}"></label>
+                <input type="file" id="photo" name="photo" accept="image/*">
+                <div th:if="${photoBase64}" style="margin-top: 0.5rem;">
+                    <img th:src="'data:' + ${photoContentType} + ';base64,' + ${photoBase64}"
+                         style="max-width: 150px; max-height: 150px;"/>
+                </div>
+            </div>
+        </div>
+
+        <div>
+            <h2 th:text="#{app.resume.additional_info}"></h2>
+            <div>
+                <label for="has_driver_licence" th:text="#{app.resume.additional_info.has_driver_licence}"></label>
+                <input id="has_driver_licence" type="checkbox" th:field="*{additionalInfo.hasDriverLicence}">
+            </div>
+            <div>
+                <label for="has_car" th:text="#{app.resume.additional_info.has_car}"></label>
+                <input id="has_car" type="checkbox" th:field="*{additionalInfo.hasCar}">
+            </div>
+            <div>
+                <label for="has_children" th:text="#{app.resume.additional_info.has_children}"></label>
+                <input id="has_children" type="checkbox" th:field="*{additionalInfo.hasChildren}">
+            </div>
+        </div>
+        <div>
+            <h2 th:text="#{app.resume.contact_info}"></h2>
+            <div>
+                <label for="phone" th:text="#{app.resume.contact_info.phone}"></label>
+                <input id="phone" type="tel" th:field="*{contactInfo.phone}">
+            </div>
+            <div>
+                <label for="email" th:text="#{app.resume.contact_info.email}"></label>
+                <input type="email" id="email" th:field="*{contactInfo.email}">
+            </div>
+            <h3 th:text="#{app.resume.contact_info.social_networks}"></h3>
+            <div id="socialNetworks">
+                <div th:each="sn, stat : *{contactInfo.socialNetworks}" class="social-network">
+                    <label th:for="${'socialType' + stat.index}"
+                           th:text="#{app.resume.contact_info.social_networks.type}"></label>
+                    <select th:id="${'socialType' + stat.index}"
+                            th:field="*{contactInfo.socialNetworks[__${stat.index}__].type}">
+                        <option th:each="type : ${T(course.work.model.resume.SocialNetworkType).values()}"
+                                th:value="${type}"
+                                th:text="${#messages.msg('app.resume.social.type.' + type)}">
+                        </option>
+                    </select>
+
+                    <label th:for="${'socialUrl' + stat.index}"
+                           th:text="#{app.resume.contact_info.social_networks.link}"></label>
+                    <input type="text"
+                           th:id="${'socialUrl' + stat.index}"
+                           th:field="*{contactInfo.socialNetworks[__${stat.index}__].link}"/>
+
+                    <button type="button"
+                            class="remove-social-btn"
+                            th:text="#{app.resume.contact_info.social_networks.remove}"
+                            onclick="removeSocialField(this)">
+                    </button>
+                </div>
+            </div>
+            <button type="button" class="add-social-btn" onclick="addSocialField()"
+                    th:text="#{app.resume.contact_info.add_social_network}">
+            </button>
+        </div>
+        <div class="form-section">
+            <h2 th:text="#{app.resume.contact_info.about}"></h2>
+            <textarea th:field="*{about}" th:placeholder="#{app.resume.about.about_placeholder}"></textarea>
+        </div>
+        <button type="submit" th:text="#{app.resume.save_button}"></button>
+    </form>
+</div>
+
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    const i18n = {
+        type: /*[[#{app.resume.contact_info.social_networks.type}]]*/ 'Тип',
+        link: /*[[#{app.resume.contact_info.social_networks.link}]]*/ 'Ссылка',
+        remove: /*[[#{app.resume.contact_info.social_networks.remove}]]*/ 'X',
+        socialTypes: {
+            TELEGRAM: /*[[#{app.resume.social.type.TELEGRAM}]]*/ 'Telegram',
+            VK: /*[[#{app.resume.social.type.VK}]]*/ 'VKontakte'
+        }
+    };
+
+    const socialNetworkTypes = /*[[${T(course.work.model.resume.SocialNetworkType).values()}]]*/ [];
+
+    function createSelectElement(index) {
+        const select = document.createElement('select');
+        select.name = `contactInfo.socialNetworks[${index}].type`;
+        select.id = `socialType${index}`;
+
+        socialNetworkTypes.forEach(type => {
+            const option = document.createElement('option');
+            option.value = type;
+            option.textContent = i18n.socialTypes[type];
+            select.appendChild(option);
+        });
+
+        return select;
+    }
+
+    function addSocialField() {
+        const container = document.getElementById('socialNetworks');
+        const index = container.children.length;
+
+        const div = document.createElement('div');
+        div.className = 'social-network';
+
+        const typeLabel = document.createElement('label');
+        typeLabel.htmlFor = `socialType${index}`;
+        typeLabel.textContent = i18n.type;
+
+        const typeSelect = createSelectElement(index);
+
+        const urlLabel = document.createElement('label');
+        urlLabel.htmlFor = `socialUrl${index}`;
+        urlLabel.textContent = i18n.link;
+
+        const urlInput = document.createElement('input');
+        urlInput.type = 'text';
+        urlInput.id = `socialUrl${index}`;
+        urlInput.name = `contactInfo.socialNetworks[${index}].link`;
+
+        const removeButton = document.createElement('button');
+        removeButton.type = 'button';
+        removeButton.className = 'remove-social-btn';
+        removeButton.textContent = i18n.remove;
+        removeButton.onclick = () => removeSocialField(removeButton);
+
+        div.appendChild(typeLabel);
+        div.appendChild(typeSelect);
+        div.appendChild(urlLabel);
+        div.appendChild(urlInput);
+        div.appendChild(removeButton);
+
+        container.appendChild(div);
+    }
+
+    function removeSocialField(button) {
+        const socialNetwork = button.closest('.social-network');
+        if (socialNetwork) {
+            socialNetwork.remove();
+            reindexSocialNetworks();
+        }
+    }
+
+    function reindexSocialNetworks() {
+        const container = document.getElementById('socialNetworks');
+        const networks = container.querySelectorAll('.social-network');
+
+        networks.forEach((network, index) => {
+            const typeSelect = network.querySelector('select');
+            typeSelect.name = `contactInfo.socialNetworks[${index}].type`;
+            typeSelect.id = `socialType${index}`;
+            network.querySelector('label:nth-of-type(1)').htmlFor = `socialType${index}`;
+
+            const urlInput = network.querySelector('input[type="text"]');
+            urlInput.name = `contactInfo.socialNetworks[${index}].link`;
+            urlInput.id = `socialUrl${index}`;
+            network.querySelector('label:nth-of-type(2)').htmlFor = `socialUrl${index}`;
+        });
+    }
+    /*]]>*/
+</script>
+</body>
+</html>

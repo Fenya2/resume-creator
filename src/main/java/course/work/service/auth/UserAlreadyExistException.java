@@ -1,4 +1,4 @@
-package course.work.service;
+package course.work.service.auth;
 
 import course.work.model.User;
 
