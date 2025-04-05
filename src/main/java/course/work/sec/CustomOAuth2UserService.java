@@ -20,6 +20,10 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         this.registrationService = registrationService;
     }
 
+    public static String getOauth2UserLogin(String provider, String userSub) {
+        return provider + ":" + userSub;
+    }
+
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) {
         String provider = userRequest.getClientRegistration().getRegistrationId();
@@ -39,9 +43,5 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         user.setLogin(userLogin);
         user.setUserName(oAuth2User.getAttribute("given_name"));
         return user;
-    }
-
-    public static String getOauth2UserLogin(String provider, String userSub) {
-        return provider + ":" + userSub;
     }
 }

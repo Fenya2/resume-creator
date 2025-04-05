@@ -10,7 +10,6 @@ import course.work.service.auth.UserAlreadyExistException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -74,8 +73,7 @@ public class AuthController {
             String sub = oAuth2Token.getPrincipal().getAttribute("sub");
             return CustomOAuth2UserService.getOauth2UserLogin(provider, sub);
         }
-        if(authentication instanceof UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken)
-        {
+        if (authentication instanceof UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken) {
             return usernamePasswordAuthenticationToken.getName();
         }
         throw new IllegalArgumentException("Unknown authorization");
