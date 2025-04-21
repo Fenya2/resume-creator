@@ -12,8 +12,8 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class UserResumeTest {
-    private static String YAML_RESUME = """
+class ResumeTest {
+    private static final String YAML_RESUME = """
             about: Опытный Java-разработчик с 5-летним стажем
             additionalInfo: {hasCar: false, hasChildren: true, hasDriverLicence: true}
             contactInfo:
@@ -28,28 +28,27 @@ class UserResumeTest {
 
     @Test
     void testYamlMarshalling() {
-        UserResume resume = createTestResume();
+        Resume resume = createTestResume();
         DumperOptions options = new DumperOptions();
         options.setExplicitStart(false);
         options.setDefaultScalarStyle(DumperOptions.ScalarStyle.PLAIN);
-        Yaml yaml = new Yaml(new Constructor(UserResume.class, new LoaderOptions()));
+        Yaml yaml = new Yaml(new Constructor(Resume.class, new LoaderOptions()));
 
-        // 3. Преобразуем объект в YAML
         String yamlString = yaml.dumpAs(resume, Tag.MAP, null);
         assertEquals(YAML_RESUME, yamlString);
     }
 
     @Test
-    void testYamlDemarshaling() {
-        Yaml yaml = new Yaml(new Constructor(UserResume.class, new LoaderOptions()));
+    void testYamlUnmarshaling() {
+        Yaml yaml = new Yaml(new Constructor(Resume.class, new LoaderOptions()));
 
-        UserResume parsedResume = yaml.load(YAML_RESUME);
+        Resume parsedResume = yaml.load(YAML_RESUME);
 
         assertNotNull(parsedResume, "Объект не должен быть null");
 
         assertEquals("Опытный Java-разработчик с 5-летним стажем", parsedResume.getAbout());
 
-        ResumeGeneralInfo generalInfo = parsedResume.getGeneralInfo();
+        Resume.GeneralInfo generalInfo = parsedResume.getGeneralInfo();
         assertNotNull(generalInfo);
         assertEquals("Иван", generalInfo.getFirstName());
         assertEquals("Иванов", generalInfo.getLastName());
@@ -58,7 +57,7 @@ class UserResumeTest {
         assertEquals(150000, generalInfo.getRequiredSalary());
         assertEquals("photo123", generalInfo.getPhotoId());
 
-        ContactInfo contactInfo = parsedResume.getContactInfo();
+        Resume.ContactInfo contactInfo = parsedResume.getContactInfo();
         assertNotNull(contactInfo);
         assertEquals("user@example.com", contactInfo.getEmail());
         assertEquals("+79991234567", contactInfo.getPhone());
@@ -74,14 +73,14 @@ class UserResumeTest {
         assertEquals(SocialNetworkType.VK, vk.getType());
         assertEquals("https://vk.com/username", vk.getLink());
 
-        ResumeAdditionalInfo additionalInfo = parsedResume.getAdditionalInfo();
+        Resume.AdditionalInfo additionalInfo = parsedResume.getAdditionalInfo();
         assertNotNull(additionalInfo);
         assertTrue(additionalInfo.isHasDriverLicence());
         assertFalse(additionalInfo.isHasCar());
         assertTrue(additionalInfo.isHasChildren());
     }
 
-    private static UserResume createTestResume() {
+    private static Resume createTestResume() {
         SocialNetwork telegram = new SocialNetwork();
         telegram.setType(SocialNetworkType.TELEGRAM);
         telegram.setLink("https://t.me/username");
@@ -90,25 +89,25 @@ class UserResumeTest {
         vk.setType(SocialNetworkType.VK);
         vk.setLink("https://vk.com/username");
 
-        ContactInfo contactInfo = new ContactInfo();
+        Resume.ContactInfo contactInfo = new Resume.ContactInfo();
         contactInfo.setPhone("+79991234567");
         contactInfo.setEmail("user@example.com");
         contactInfo.setSocialNetworks(List.of(telegram, vk));
 
-        ResumeAdditionalInfo additionalInfo = new ResumeAdditionalInfo();
+        Resume.AdditionalInfo additionalInfo = new Resume.AdditionalInfo();
         additionalInfo.setHasDriverLicence(true);
         additionalInfo.setHasCar(false);
         additionalInfo.setHasChildren(true);
 
-        ResumeGeneralInfo generalInfo = new ResumeGeneralInfo();
+        Resume.GeneralInfo generalInfo = new Resume.GeneralInfo();
         generalInfo.setFirstName("Иван");
         generalInfo.setLastName("Иванов");
-        generalInfo.setBirthday(new Date(91, 5, 15)); // Обратите внимание на месяц (5 = май)
+        generalInfo.setBirthday(new Date(91, 5, 15));
         generalInfo.setCity("Москва");
         generalInfo.setRequiredSalary(150000);
         generalInfo.setPhotoId("photo123");
 
-        UserResume resume = new UserResume();
+        Resume resume = new Resume();
         resume.setGeneralInfo(generalInfo);
         resume.setAdditionalInfo(additionalInfo);
         resume.setContactInfo(contactInfo);

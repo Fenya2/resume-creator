@@ -1,13 +1,17 @@
 server:
+  port: 8080
+  address: 0.0.0.0
   servlet:
     context-path: /app
-    address: 0.0.0.0
-    port: 8080
   tomcat:
     basedir: "tomcat"
     accesslog:
       enabled: true
 spring:
+  mvc:
+    hiddenmethod:
+      filter:
+        enabled: true
   thymeleaf:
     encoding: UTF-8
     mode: HTML
@@ -28,9 +32,12 @@ spring:
             client-secret: ${GOOGLE_CLIENT_SECRET}
             scope: email, profile
             redirect-uri: http://localhost:8080/app/login/oauth2/code/google
+  messages:
+    basename: messages_en
+    encoding: UTF-8
 logging:
   level:
     root: INFO
-    сourse.work: DEBUG
+    course.work: DEBUG
   pattern:
     console: "%d{yyyy-MM-dd HH:mm:ss} - %level - %logger - %msg%n"

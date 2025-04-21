@@ -26,6 +26,10 @@ public class User {
     @Nullable
     private String password;
 
+    public long getId() {
+        return id;
+    }
+
     public String getLogin() {
         return login;
     }

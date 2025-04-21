@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" th:href="@{/favicon.ico}" type="image/x-icon">
+    <title th:text="#{app.resume.title}"></title>
+</head>
+<body>
+<header>
+    <div th:if="${error}" style="color: red;" th:text="#{app.resume.save_details_error}"></div>
+    <form th:action="@{/resume/{id}(id=${resumeDetails.id})}" method="post">
+        <input type="hidden" name="_method" value="patch">
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+
+        <input type="text" name="detailsName" th:value="${resumeDetails.name}">
+        <button type="submit">Сохранить</button>
+    </form>
+</header>
+<div>
+    <h1>Создание резюме</h1>
+
+    <form th:action="@{/resumes/save}" method="post" th:object="${resume}">
+        <div>
+            <h2>Общая информация</h2>
+
+            <div>
+                <label for="firstName">Имя:</label>
+                <input type="text" id="firstName" th:field="*{generalInfo.firstName}" required>
+            </div>
+
+            <div>
+                <label for="lastName">Фамилия:</label>
+                <input type="text" id="lastName" th:field="*{generalInfo.lastName}" required>
+            </div>
+
+            <div>
+                <label for="birthday">Дата рождения:</label>
+                <input type="date" id="birthday" th:field="*{generalInfo.birthday}">
+            </div>
+
+            <div>
+                <label for="city">Город:</label>
+                <input type="text" id="city" th:field="*{generalInfo.city}">
+            </div>
+
+            <div>
+                <label for="requiredSalary">Желаемая зарплата:</label>
+                <input type="number" id="requiredSalary" th:field="*{generalInfo.requiredSalary}" min="0">
+            </div>
+
+            <div>
+                <label for="photoId">ID фотографии:</label>
+                <input type="text" id="photoId" th:field="*{generalInfo.photoId}">
+            </div>
+        </div>
+
+        <div>
+            <h2>Дополнительная информация</h2>
+
+            <div>
+                <label>
+                    <input type="checkbox" th:field="*{additionalInfo.hasDriverLicence}"> Наличие водительских прав
+                </label>
+
+                <label>
+                    <input type="checkbox" th:field="*{additionalInfo.hasCar}"> Наличие автомобиля
+                </label>
+
+                <label>
+                    <input type="checkbox" th:field="*{additionalInfo.hasChildren}"> Наличие детей
+                </label>
+            </div>
+        </div>
+
+        <div>
+            <h2>Контактная информация</h2>
+
+            <div>
+                <label for="phone">Телефон:</label>
+                <input type="tel" id="phone" th:field="*{contactInfo.phone}">
+            </div>
+
+            <div>
+                <label for="email">Email:</label>
+                <input type="email" id="email" th:field="*{contactInfo.email}">
+            </div>
+
+            <h3>Социальные сети</h3>
+            <div id="socialNetworks">
+                <div class="social-network" th:each="social, iterStat : *{contactInfo.socialNetworks}">
+                    <label th:for="'socialType' + ${iterStat.index}">Тип:</label>
+                    <input type="text" th:id="'socialType' + ${iterStat.index}"
+                           th:field="*{contactInfo.socialNetworks[__${iterStat.index}__].type}">
+
+                    <label th:for="'socialUrl' + ${iterStat.index}">URL:</label>
+                    <input type="text" th:id="'socialUrl' + ${iterStat.index}"
+                           th:field="*{contactInfo.socialNetworks[__${iterStat.index}__].url}">
+                </div>
+            </div>
+
+            <button type="button" class="add-social-btn" onclick="addSocialField()">Добавить социальную сеть</button>
+        </div>
+
+        <div class="form-section">
+            <h2>О себе</h2>
+            <textarea th:field="*{about}" placeholder="Расскажите о себе, своих навыках и опыте..."></textarea>
+        </div>
+
+        <div style="text-align: center;">
+            <button type="submit">Сохранить резюме</button>
+        </div>
+    </form>
+</div>
+
+<script>
+    function addSocialField() {
+        const container = document.getElementById('socialNetworks');
+        const index = container.children.length;
+
+        const div = document.createElement('div');
+        div.className = 'social-network';
+        div.innerHTML = `
+            <label for="socialType${index}">Тип:</label>
+            <input type="text" id="socialType${index}" name="contactInfo.socialNetworks[${index}].type">
+
+            <label for="socialUrl${index}">URL:</label>
+            <input type="text" id="socialUrl${index}" name="contactInfo.socialNetworks[${index}].url">
+        `;
+
+        container.appendChild(div);
+    }
+</script>
+</body>
+</html>

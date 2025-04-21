@@ -11,8 +11,8 @@
     </parent>
 
     <packaging>jar</packaging>
-    <name>resume creator</name>
-    <description>create your beautiful resume</description>
+    <name>resumeDetails creator</name>
+    <description>create your beautiful resumeDetails</description>
 
     <groupId>course.work</groupId>
     <artifactId>CourseWork6sem</artifactId>

@@ -34,7 +34,7 @@ public class RegistrationServiceImpl implements RegistrationService {
             user.setPassword(passwordEncoder.encode(user.getPassword()));
         }
         userRepository.save(user);
-        LOG.atInfo().log("User %s successfully registered".formatted(user.getLogin()));
+        LOG.atInfo().log("User {} successfully registered", user.getLogin());
     }
 
     @Override

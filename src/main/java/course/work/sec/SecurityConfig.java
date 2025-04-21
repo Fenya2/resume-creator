@@ -31,36 +31,32 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http
+        return http
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
-                                "/login", // Страница логина
-                                "/register", // Страница регистрации
-                                "/oauth2/**", // Пути для OAuth2
-                                "/login/oauth2/code/google", // Google callback URL
-                                "/favicon.ico"
-                        ).permitAll()
-                        .anyRequest().authenticated()
-                )
+                                "/login",
+                                "/register",
+                                "/oauth2/**",
+                                "/login/oauth2/code/google",
+                                "/favicon.ico")
+                        .permitAll()
+                        .anyRequest().authenticated())
                 .formLogin(form -> form
                         .loginPage(LOGIN_PAGE_ENDPOINT)
-                        .defaultSuccessUrl(ROOT_ENDPOINT)
+                        .defaultSuccessUrl(ROOT_ENDPOINT, true)
                         .failureUrl(LOGIN_ERROR_ENDPOINT)
-                        .permitAll()
-                )
-                .oauth2Login(oauth -> oauth  // Добавляем OAuth2 конфигурацию
+                        .permitAll())
+                .oauth2Login(oauth -> oauth
                         .loginPage(LOGIN_PAGE_ENDPOINT)
-                        .defaultSuccessUrl(ROOT_ENDPOINT)  // URL после успешной авторизации
+                        .defaultSuccessUrl(ROOT_ENDPOINT, true)
                         .failureUrl(LOGIN_ERROR_ENDPOINT)
                         .userInfoEndpoint(userInfo -> userInfo
-                                .userService(customOAuth2UserService))
-                )
+                                .userService(customOAuth2UserService)))
                 .logout(logout -> logout
                         .logoutSuccessUrl("/login?logout=true")
-                        .permitAll()
-                )
+                        .permitAll())
                 .userDetailsService(userDetailsService)
-                .csrf(Customizer.withDefaults()); // Включаем CSRF защиту
-        return http.build();
+                .csrf(Customizer.withDefaults())
+                .build();
     }
 }
