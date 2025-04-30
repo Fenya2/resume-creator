@@ -1,5 +1,7 @@
 package course.work.model.resume;
 
+import org.springframework.format.annotation.DateTimeFormat;
+
 import java.util.Date;
 import java.util.List;
 
@@ -49,6 +51,7 @@ public class Resume {
 
         private String lastName;
 
+        @DateTimeFormat(pattern = "yyyy-MM-dd")
         private Date birthday;
 
         private String city;

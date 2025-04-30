@@ -2,6 +2,7 @@ package course.work.controller;
 
 import course.work.dao.UserRepository;
 import course.work.model.User;
+import course.work.model.resume.Resume;
 import course.work.model.resume.ResumeDetails;
 import course.work.service.resume.InvalidOwnerException;
 import course.work.service.resume.ResumeDetailsExistsException;
@@ -13,13 +14,14 @@ import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import static course.work.controller.AuthenticationUtils.extractLoginFromAuthentication;
 
 @Controller
 public class ResumeController {
-
+    private static final String REDIRECT_RESUME = "redirect:/resume/";
     private final UserRepository userRepository;
     private final ResumeService resumeService;
 
@@ -55,12 +57,12 @@ public class ResumeController {
         String login = extractLoginFromAuthentication(authentication);
         User user = userRepository.findByLogin(login).orElseThrow();
         ResumeDetails resumeDetails = resumeService.createFor(user);
-        return "redirect:/resume/" + resumeDetails.getId();
+        return REDIRECT_RESUME + resumeDetails.getId();
     }
 
-    @PatchMapping("/resume/{id}")
+    @PatchMapping("/resume/{id}/meta")
     @Transactional
-    public String editResumeDetails(
+    public String saveResumeDetails(
             @PathVariable long id,
             Authentication authentication,
             @RequestParam String detailsName,
@@ -74,12 +76,22 @@ public class ResumeController {
         } catch (ResumeDetailsExistsException e) {
             redirectAttributes.addFlashAttribute("error", 1);
             redirectAttributes.addFlashAttribute("preservedName", detailsName);
-            return "redirect:/resume/" + id;
+            return REDIRECT_RESUME + id;
         } catch (InvalidOwnerException e) {
             response.setStatus(HttpStatus.FORBIDDEN.value());
             return null;
         }
 
-        return "redirect:/resume/" + id;
+        return REDIRECT_RESUME + id;
+    }
+
+    @PostMapping("/resume/{id}")
+    @Transactional
+    public String saveResume(
+            Authentication authentication,
+            @PathVariable long id,
+            @ModelAttribute("resume") Resume resume,
+            @RequestParam("photo") MultipartFile photo) {
+        return REDIRECT_RESUME + id;
     }
 }
