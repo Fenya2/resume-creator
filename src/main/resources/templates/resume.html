@@ -20,6 +20,7 @@
           method="post" th:object="${resume}"
           enctype="multipart/form-data">
         <div>
+            <input type="hidden" name="_method" value="put">
             <h2 th:text="#{app.resume.general_info}"></h2>
             <div>
                 <label for="firstName" th:text="#{app.resume.general_info.first_name}"></label>
@@ -44,6 +45,10 @@
             <div>
                 <label for="photo" th:text="#{app.resume.general_info.photo}"></label>
                 <input type="file" id="photo" name="photo" accept="image/*">
+                <div th:if="${photoBase64}" style="margin-top: 0.5rem;">
+                    <img th:src="'data:' + ${photoContentType} + ';base64,' + ${photoBase64}"
+                         style="max-width: 150px; max-height: 150px;"/>
+                </div>
             </div>
         </div>
 
@@ -73,7 +78,31 @@
                 <input type="email" id="email" th:field="*{contactInfo.email}">
             </div>
             <h3 th:text="#{app.resume.contact_info.social_networks}"></h3>
-            <div id="socialNetworks"></div>
+            <div id="socialNetworks">
+                <div th:each="sn, stat : *{contactInfo.socialNetworks}" class="social-network">
+                    <label th:for="${'socialType' + stat.index}"
+                           th:text="#{app.resume.contact_info.social_networks.type}"></label>
+                    <select th:id="${'socialType' + stat.index}"
+                            th:field="*{contactInfo.socialNetworks[__${stat.index}__].type}">
+                        <option th:each="type : ${T(course.work.model.resume.SocialNetworkType).values()}"
+                                th:value="${type}"
+                                th:text="${#messages.msg('app.resume.social.type.' + type)}">
+                        </option>
+                    </select>
+
+                    <label th:for="${'socialUrl' + stat.index}"
+                           th:text="#{app.resume.contact_info.social_networks.link}"></label>
+                    <input type="text"
+                           th:id="${'socialUrl' + stat.index}"
+                           th:field="*{contactInfo.socialNetworks[__${stat.index}__].link}"/>
+
+                    <button type="button"
+                            class="remove-social-btn"
+                            th:text="#{app.resume.contact_info.social_networks.remove}"
+                            onclick="removeSocialField(this)">
+                    </button>
+                </div>
+            </div>
             <button type="button" class="add-social-btn" onclick="addSocialField()"
                     th:text="#{app.resume.contact_info.add_social_network}">
             </button>

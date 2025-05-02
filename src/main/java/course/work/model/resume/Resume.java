@@ -1,5 +1,6 @@
 package course.work.model.resume;
 
+import jakarta.annotation.Nullable;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
@@ -58,6 +59,7 @@ public class Resume {
 
         private int requiredSalary;
 
+        @Nullable
         private String photoId;
 
         public String getFirstName() {
@@ -100,11 +102,12 @@ public class Resume {
             this.requiredSalary = requiredSalary;
         }
 
+        @Nullable
         public String getPhotoId() {
             return photoId;
         }
 
-        public void setPhotoId(String photoId) {
+        public void setPhotoId(@Nullable String photoId) {
             this.photoId = photoId;
         }
     }

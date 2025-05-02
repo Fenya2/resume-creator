@@ -4,16 +4,21 @@ import course.work.dao.ResumeDetailsRepository;
 import course.work.model.User;
 import course.work.model.resume.Resume;
 import course.work.model.resume.ResumeDetails;
+import course.work.s3.Photo;
+import course.work.s3.PhotoStorage;
+import course.work.s3.PhotoUUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.LoaderOptions;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
 import org.yaml.snakeyaml.nodes.Tag;
 
+import java.io.IOException;
 import java.time.Instant;
 import java.util.List;
 
@@ -22,10 +27,12 @@ public class ResumeServiceImpl implements ResumeService {
     private static final Logger LOG = LoggerFactory.getLogger(ResumeServiceImpl.class);
 
     private final ResumeDetailsRepository resumeDetailsRepository;
+    private final PhotoStorage photoStorage;
 
     @Autowired
-    public ResumeServiceImpl(ResumeDetailsRepository resumeDetailsRepository) {
+    public ResumeServiceImpl(ResumeDetailsRepository resumeDetailsRepository, PhotoStorage photoStorage) {
         this.resumeDetailsRepository = resumeDetailsRepository;
+        this.photoStorage = photoStorage;
     }
 
     @Override
@@ -37,7 +44,7 @@ public class ResumeServiceImpl implements ResumeService {
         Resume emptyResume = createUserResumeFromTemplate();
         resumeDetails.setResume(marshalUserResume(emptyResume));
         resumeDetailsRepository.save(resumeDetails);
-        LOG.atInfo().log("Created resume {} for user {}", resumeDetails.getId(), user.getLogin());
+        LOG.atInfo().log("Create resume {} for {}", resumeDetails.getId(), user.getLogin());
         return resumeDetails;
     }
 
@@ -89,6 +96,31 @@ public class ResumeServiceImpl implements ResumeService {
     @Override
     public List<ResumeDetails> getUserResumesDetails(User user) {
         return resumeDetailsRepository.findByOwnerOrderByDateCreatedDesc(user);
+    }
+
+    @Override
+    public void updateResume(ResumeDetails resumeDetails, Resume resume, MultipartFile photo) {
+        ResumeDetails oldDetails = getDetails(resumeDetails.getId());
+        Resume oldResume = unmarshallUserResume(oldDetails.getResume());
+
+        String oldPhotoUuid = oldResume.getGeneralInfo().getPhotoId();
+        if (!photo.isEmpty()) {
+            if (oldPhotoUuid != null) {
+                photoStorage.deletePhoto(new PhotoUUID(oldPhotoUuid));
+            }
+            byte[] photoData;
+            try {
+                photoData = photo.getBytes();
+            } catch (IOException e) {
+                throw new CantUpdatePhotoException("Can't extract photo", e);
+            }
+            PhotoUUID newPhotoUuid = photoStorage.uploadPhoto(new Photo(photoData));
+            resume.getGeneralInfo().setPhotoId(newPhotoUuid.photoId().toString());
+        } else {
+            resume.getGeneralInfo().setPhotoId(oldPhotoUuid);
+        }
+        resumeDetails.setResume(marshalUserResume(resume));
+        LOG.atInfo().log("resume {} updated", resumeDetails.getId());
     }
 
     @Override
