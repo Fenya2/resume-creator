@@ -90,7 +90,6 @@ public class ResumeController {
             HttpServletResponse response) {
         String login = extractLoginFromAuthentication(authentication);
         User user = userRepository.findByLogin(login).orElseThrow();
-
         try {
             resumeService.updateUserResumeDetails(user, detailsName, id);
         } catch (ResumeDetailsExistsException e) {
@@ -101,7 +100,6 @@ public class ResumeController {
             response.setStatus(FORBIDDEN.value());
             return null;
         }
-
         return REDIRECT_RESUME + id;
     }
 

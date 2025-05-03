@@ -34,11 +34,12 @@ public class SecurityConfig {
         return http
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
-                                "/login",
+                                LOGIN_PAGE_ENDPOINT,
                                 "/register",
                                 "/oauth2/**",
                                 "/login/oauth2/code/google",
-                                "/favicon.ico")
+                                "/favicon.ico",
+                                "/export.png")
                         .permitAll()
                         .anyRequest().authenticated())
                 .formLogin(form -> form

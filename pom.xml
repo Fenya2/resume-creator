@@ -78,8 +78,13 @@
             <artifactId>minio</artifactId>
             <version>8.5.17</version>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/org.xhtmlrenderer/flying-saucer-pdf -->
+        <dependency>
+            <groupId>org.xhtmlrenderer</groupId>
+            <artifactId>flying-saucer-pdf</artifactId>
+            <version>9.12.0</version>
+        </dependency>
     </dependencies>
-
     <build>
         <plugins>
             <plugin>

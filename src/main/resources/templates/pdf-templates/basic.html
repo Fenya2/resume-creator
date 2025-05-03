@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <style>
+        /* Подключение шрифтов */
+        @font-face {
+            font-family: 'Roboto';
+            src: url('fonts/Roboto-Regular.ttf') format('truetype');
+        }
+
+        @font-face {
+            font-family: 'DejaVu';
+            src: url('fonts/DejaVuSans.ttf') format('truetype');
+        }
+
+        /* Общие стили для документа */
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f7fc;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .container {
+            width: 80%;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        h1, h2 {
+            font-family: 'Roboto', sans-serif;
+            color: #2c3e50;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        /* Стили для секций */
+        section {
+            margin-bottom: 20px; /* Уменьшили отступы между секциями */
+        }
+
+        section h3 {
+            color: #3498db;
+            font-size: 1.3rem;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 5px;
+        }
+
+        p {
+            font-size: 1rem;
+            margin: 8px 0;
+            line-height: 1.5;
+        }
+
+        strong {
+            font-weight: bold;
+            color: #34495e;
+        }
+
+        .unicode-symbol {
+            font-family: 'DejaVu', sans-serif;
+            font-size: 1.2rem;
+            color: #2ecc71;
+        }
+
+        /* Стиль для раздела фото */
+        .photo-section {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .photo-section img {
+            max-width: 150px;
+            max-height: 150px;
+            border-radius: 50%;
+            border: 2px solid #3498db;
+        }
+
+        /* Контактная информация */
+        .contact-info p {
+            font-size: 1rem;
+            margin: 5px 0;
+        }
+
+        .social-networks {
+            margin-top: 10px;
+        }
+
+        .social-networks p {
+            padding: 5px 0;
+            border-bottom: 1px solid #ecf0f1;
+        }
+
+        .social-networks p:last-child {
+            border-bottom: none;
+        }
+
+        .social-networks strong {
+            color: #3498db;
+        }
+
+        .social-networks span {
+            color: #95a5a6;
+        }
+
+        /* Стиль для таблиц (если потребуется) */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+
+        th, td {
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #3498db;
+            color: #fff;
+        }
+
+        /* Стили для раздела дополнительной информации */
+        .additional-info p {
+            font-size: 1rem;
+            margin: 5px 0;
+            line-height: 1.6;
+        }
+
+        .additional-info span {
+            color: #2ecc71;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <!-- Заголовок резюме -->
+    <h1 th:text="${resume.generalInfo.firstName} + ' ' + ${resume.generalInfo.lastName}"></h1>
+    <h2 th:text="#{app.resume.general_info}"></h2>
+
+    <!-- Основная информация -->
+    <section>
+        <h3 th:text="#{app.resume.general_info}"></h3>
+        <p><strong th:text="#{app.resume.general_info.first_name} + ':'"></strong> <span
+                th:text="${resume.generalInfo.firstName}"></span></p>
+        <p><strong th:text="#{app.resume.general_info.last_name} + ':'"></strong> <span
+                th:text="${resume.generalInfo.lastName}"></span></p>
+        <p><strong th:text="#{app.resume.general_info.birthday} + ':'"></strong>
+            <span th:text="${#dates.format(resume.generalInfo.birthday, 'yy.MM.yyyy')}"></span>
+            <!-- Форматирование даты -->
+        </p>
+        <p><strong th:text="#{app.resume.general_info.city} + ':'"></strong> <span
+                th:text="${resume.generalInfo.city}"></span></p>
+        <p><strong th:text="#{app.resume.general_info.required_salary} + ':'"></strong> <span
+                th:text="${resume.generalInfo.requiredSalary}"></span></p>
+
+        <div th:if="${resume.generalInfo.photoId}" class="photo-section">
+            <img th:src="'/images/' + ${resume.generalInfo.photoId}" alt="Фото"/>
+        </div>
+    </section>
+
+    <!-- Дополнительная информация -->
+    <section class="additional-info">
+        <h3 th:text="#{app.resume.additional_info}"></h3>
+        <p th:if="${resume.additionalInfo.hasDriverLicence}">
+            <strong th:text="#{app.resume.additional_info.has_driver_licence} + ':'"></strong> <span
+                class="unicode-symbol">✔</span>
+        </p>
+        <p th:if="${resume.additionalInfo.hasCar}">
+            <strong th:text="#{app.resume.additional_info.has_car} + ':'"></strong> <span
+                class="unicode-symbol">✔</span>
+        </p>
+        <p th:if="${resume.additionalInfo.hasChildren}">
+            <strong th:text="#{app.resume.additional_info.has_children} + ':'"></strong> <span
+                class="unicode-symbol">✔</span>
+        </p>
+    </section>
+
+    <!-- Контактная информация -->
+    <section class="contact-info">
+        <h3 th:text="#{app.resume.contact_info}"></h3>
+        <p><strong th:text="#{app.resume.contact_info.phone} + ':'"></strong> <span
+                th:text="${resume.contactInfo.phone}"></span></p>
+        <p><strong th:text="#{app.resume.contact_info.email} + ':'"></strong> <span
+                th:text="${resume.contactInfo.email}"></span></p>
+
+        <h4 th:text="#{app.resume.contact_info.social_networks}"></h4>
+        <div th:each="sn : ${resume.contactInfo.socialNetworks}" class="social-networks">
+            <p>
+                <span th:text="${sn.type}"></span> <!-- Убрали 'Тип' -->
+                <span>:</span>
+                <span th:text="${sn.link}"></span> <!-- Убрали 'Ссылка' -->
+            </p>
+        </div>
+    </section>
+
+    <!-- О себе -->
+    <section>
+        <h3 th:text="#{app.resume.contact_info.about}"></h3>
+        <p th:text="${resume.about}"></p>
+    </section>
+</div>
+</body>
+</html>

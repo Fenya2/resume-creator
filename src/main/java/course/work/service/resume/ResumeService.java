@@ -18,7 +18,7 @@ public interface ResumeService {
 
     void updateUserResumeDetails(User user, String detailsName, long resumeDetailsId) throws ResumeServiceException;
 
-    void checkResumeOwnsUser(ResumeDetails resumeDetails, User user);
+    void checkResumeOwnsUser(ResumeDetails resumeDetails, User user) throws InvalidOwnerException;
 
     void updateResume(ResumeDetails resumeDetails, Resume resume, MultipartFile photo);
 }

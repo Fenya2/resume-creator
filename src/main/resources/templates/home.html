@@ -21,6 +21,11 @@
         <ul>
             <li th:each="resumeDetails : ${resumes}">
                 <a th:href="@{/resume/} + ${resumeDetails.id}" th:text="${resumeDetails.name}"></a>
+
+                <a th:href="@{/resume/{id}/export(id=${resumeDetails.id})}">
+                    <img th:src="@{/export.png}"
+                         alt="Export"
+                         style="width: 20px; height: 20px; vertical-align: middle;">
             </li>
         </ul>
     </div>

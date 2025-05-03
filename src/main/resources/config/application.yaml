@@ -21,13 +21,13 @@ spring:
     encoding: UTF-8
     mode: HTML
   datasource:
-    url: jdbc:postgresql://localhost:5432/resume_creator
-    username: fenya
-    password: 123
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: update
   security:
     oauth2:
       client:

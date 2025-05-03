@@ -7,6 +7,7 @@
 </head>
 <body>
 <header>
+    <a th:href="@{/}" th:text="#{app.resume.go_home}"></a>
     <p th:if="${error}" style="color: red;" th:text="#{app.resume.save_details_error}"></p>
     <form th:action="@{/resume/{id}/meta(id=${resumeDetails.id})}" method="post">
         <input type="hidden" name="_method" value="patch">

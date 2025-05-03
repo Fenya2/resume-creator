@@ -20,10 +20,12 @@ public class SchemeInitializer {
 
     @PostConstruct
     public void init() {
-        User user = new User();
-        user.setLogin("user");
-        user.setPassword("user");
-        user.setUserName("Дима");
-        registrationService.registerUser(user);
+        if (registrationService.isRegistered("login")) {
+            User user = new User();
+            user.setLogin("user");
+            user.setPassword("user");
+            user.setUserName("Дима");
+            registrationService.registerUser(user);
+        }
     }
 }
