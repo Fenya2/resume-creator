@@ -136,6 +136,12 @@ public class ResumeServiceImpl implements ResumeService {
 
     @Override
     public void deleteResume(long id) {
+        ResumeDetails details = getDetails(id);
+        Resume resume = unmarshallUserResume(details.getResume());
+        String oldPhotoUuid = resume.getGeneralInfo().getPhotoId();
+        if (oldPhotoUuid != null) {
+            photoStorage.deletePhoto(new PhotoUUID(oldPhotoUuid));
+        }
         resumeDetailsRepository.deleteById(id);
     }
 }
