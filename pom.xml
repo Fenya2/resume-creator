@@ -16,7 +16,7 @@
 
     <groupId>course.work</groupId>
     <artifactId>CourseWork6sem</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.0.3</version>
 
     <properties>
         <maven.compiler.source>21</maven.compiler.source>
