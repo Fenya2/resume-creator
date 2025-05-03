@@ -21,6 +21,7 @@ import org.yaml.snakeyaml.nodes.Tag;
 import java.io.IOException;
 import java.time.Instant;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class ResumeServiceImpl implements ResumeService {
@@ -39,7 +40,7 @@ public class ResumeServiceImpl implements ResumeService {
     public ResumeDetails createFor(User user) {
         ResumeDetails resumeDetails = new ResumeDetails();
         resumeDetails.setDateCreated(Instant.now());
-        resumeDetails.setName(user.getUserName() + "_" + resumeDetails.getDateCreated());
+        resumeDetails.setName(UUID.randomUUID().toString());
         resumeDetails.setOwner(user);
         Resume emptyResume = createUserResumeFromTemplate();
         resumeDetails.setResume(marshalUserResume(emptyResume));
@@ -131,5 +132,10 @@ public class ResumeServiceImpl implements ResumeService {
     private static Resume unmarshallUserResume(String resume) {
         Yaml yaml = new Yaml(new Constructor(Resume.class, new LoaderOptions()));
         return yaml.load(resume);
+    }
+
+    @Override
+    public void deleteResume(long id) {
+        resumeDetailsRepository.deleteById(id);
     }
 }

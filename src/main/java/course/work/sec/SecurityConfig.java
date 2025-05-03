@@ -38,8 +38,7 @@ public class SecurityConfig {
                                 "/register",
                                 "/oauth2/**",
                                 "/login/oauth2/code/google",
-                                "/favicon.ico",
-                                "/export.png")
+                                "/favicon.ico")
                         .permitAll()
                         .anyRequest().authenticated())
                 .formLogin(form -> form

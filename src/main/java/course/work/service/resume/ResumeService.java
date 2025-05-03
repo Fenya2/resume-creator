@@ -21,4 +21,6 @@ public interface ResumeService {
     void checkResumeOwnsUser(ResumeDetails resumeDetails, User user) throws InvalidOwnerException;
 
     void updateResume(ResumeDetails resumeDetails, Resume resume, MultipartFile photo);
+
+    void deleteResume(long id);
 }

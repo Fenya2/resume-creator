@@ -71,6 +71,26 @@ public class ResumeController {
         return "resume";
     }
 
+    @DeleteMapping("/{id}")
+    @Transactional
+    public String deleteResume(Authentication authentication,
+                               @PathVariable long id,
+                               HttpServletResponse response) {
+        String login = extractLoginFromAuthentication(authentication);
+        User user = userRepository.findByLogin(login).orElseThrow();
+        ResumeDetails resumeDetails = resumeService.getDetails(id);
+        try {
+            resumeService.checkResumeOwnsUser(resumeDetails, user);
+        } catch (InvalidOwnerException e) {
+            response.setStatus(FORBIDDEN.value());
+            return null;
+        }
+
+        resumeService.deleteResume(id);
+
+        return "redirect:/";
+    }
+
     @PostMapping("/create")
     @Transactional
     public String createResume(Authentication authentication, Model model) {
