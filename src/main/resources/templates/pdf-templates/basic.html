@@ -3,7 +3,6 @@
 <head>
     <meta charset="UTF-8"/>
     <style>
-        /* Подключение шрифтов */
         @font-face {
             font-family: 'Roboto';
             src: url('fonts/Roboto-Regular.ttf') format('truetype');
@@ -137,53 +136,69 @@
         .additional-info span {
             color: #2ecc71;
         }
+
+        .photo-section {
+            width: 120px;  /* Фиксированный размер */
+            height: 120px;
+            border-radius: 50%;
+            overflow: hidden;  /* Обрезаем углы */
+        }
+
+        .photo-section img {
+            width: 100%;  /* Заполняем контейнер */
+            height: 100%;
+            object-fit: cover;  /* Сохраняем пропорции */
+        }
+
+        .birthdate {
+            font-style: italic;
+            color: #666;
+            margin-top: -10px; /* Уменьшаем отступ от предыдущего параграфа */
+        }
     </style>
 </head>
 <body>
 <div class="container">
-    <!-- Заголовок резюме -->
+    <!-- Блок с фото -->
+    <div th:if="${resume.generalInfo.photoId}" class="photo-section">
+        <img th:src="'data:image/png;base64,' + ${photoBase64}" alt="Фото"/>
+    </div>
+
+
     <h1 th:text="${resume.generalInfo.firstName} + ' ' + ${resume.generalInfo.lastName}"></h1>
     <h2 th:text="#{app.resume.general_info}"></h2>
 
-    <!-- Основная информация -->
     <section>
-        <h3 th:text="#{app.resume.general_info}"></h3>
-        <p><strong th:text="#{app.resume.general_info.first_name} + ':'"></strong> <span
-                th:text="${resume.generalInfo.firstName}"></span></p>
-        <p><strong th:text="#{app.resume.general_info.last_name} + ':'"></strong> <span
-                th:text="${resume.generalInfo.lastName}"></span></p>
-        <p><strong th:text="#{app.resume.general_info.birthday} + ':'"></strong>
-            <span th:text="${#dates.format(resume.generalInfo.birthday, 'yy.MM.yyyy')}"></span>
-            <!-- Форматирование даты -->
+        <p>
+            <span th:text="${resume.generalInfo.firstName} + ' ' + ${resume.generalInfo.lastName}"></span>
         </p>
-        <p><strong th:text="#{app.resume.general_info.city} + ':'"></strong> <span
-                th:text="${resume.generalInfo.city}"></span></p>
-        <p><strong th:text="#{app.resume.general_info.required_salary} + ':'"></strong> <span
-                th:text="${resume.generalInfo.requiredSalary}"></span></p>
 
-        <div th:if="${resume.generalInfo.photoId}" class="photo-section">
-            <img th:src="'/images/' + ${resume.generalInfo.photoId}" alt="Фото"/>
-        </div>
+        <p class="birthdate">
+            <span th:text="${#dates.format(resume.generalInfo.birthday, 'dd.MM.yyyy')}"></span>
+        </p>
+
+        <p><strong th:text="#{app.resume.general_info.city} + ':'"></strong>
+            <span th:text="${resume.generalInfo.city}"></span></p>
+        <p><strong th:text="#{app.resume.general_info.required_salary} + ':'"></strong>
+            <span th:text="${resume.generalInfo.requiredSalary}"></span></p>
     </section>
 
-    <!-- Дополнительная информация -->
     <section class="additional-info">
         <h3 th:text="#{app.resume.additional_info}"></h3>
         <p th:if="${resume.additionalInfo.hasDriverLicence}">
-            <strong th:text="#{app.resume.additional_info.has_driver_licence} + ':'"></strong> <span
+            <strong th:text="#{app.resume.additional_info.has_driver_licence}"></strong> <span
                 class="unicode-symbol">✔</span>
         </p>
         <p th:if="${resume.additionalInfo.hasCar}">
-            <strong th:text="#{app.resume.additional_info.has_car} + ':'"></strong> <span
+            <strong th:text="#{app.resume.additional_info.has_car}"></strong> <span
                 class="unicode-symbol">✔</span>
         </p>
         <p th:if="${resume.additionalInfo.hasChildren}">
-            <strong th:text="#{app.resume.additional_info.has_children} + ':'"></strong> <span
+            <strong th:text="#{app.resume.additional_info.has_children}"></strong> <span
                 class="unicode-symbol">✔</span>
         </p>
     </section>
 
-    <!-- Контактная информация -->
     <section class="contact-info">
         <h3 th:text="#{app.resume.contact_info}"></h3>
         <p><strong th:text="#{app.resume.contact_info.phone} + ':'"></strong> <span
@@ -193,15 +208,14 @@
 
         <h4 th:text="#{app.resume.contact_info.social_networks}"></h4>
         <div th:each="sn : ${resume.contactInfo.socialNetworks}" class="social-networks">
-            <p>
-                <span th:text="${sn.type}"></span> <!-- Убрали 'Тип' -->
+            <strong>
+                <span th:text="${sn.type}"></span>
                 <span>:</span>
-                <span th:text="${sn.link}"></span> <!-- Убрали 'Ссылка' -->
-            </p>
+                <span th:text="${sn.link}"></span>
+            </strong>
         </div>
     </section>
 
-    <!-- О себе -->
     <section>
         <h3 th:text="#{app.resume.contact_info.about}"></h3>
         <p th:text="${resume.about}"></p>

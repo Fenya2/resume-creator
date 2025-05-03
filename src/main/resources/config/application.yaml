@@ -38,7 +38,7 @@ spring:
             scope: email, profile
             redirect-uri: http://localhost:8080/app/login/oauth2/code/google
   messages:
-    basename: messages_ru
+    basename: messages_en
     encoding: UTF-8
 minio:
   endpoint: http://localhost:9000

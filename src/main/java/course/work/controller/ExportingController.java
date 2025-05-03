@@ -11,11 +11,14 @@ import course.work.service.resume.ResumeService;
 import jakarta.transaction.Transactional;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
+import org.springframework.http.ContentDisposition;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+
+import java.nio.charset.StandardCharsets;
 
 import static course.work.controller.AuthenticationUtils.extractLoginFromAuthentication;
 import static course.work.service.exporting.ResumeTemplate.BASIC_TEMPLATE;
@@ -62,8 +65,14 @@ public class ExportingController {
 
         ByteArrayResource resource = new ByteArrayResource(result.data());
 
+        String fileName = details.getName() + ".pdf";
+
+        ContentDisposition contentDisposition = ContentDisposition.attachment()
+                .filename(fileName, StandardCharsets.UTF_8)
+                .build();
+
         return ResponseEntity.ok()
-                .header(CONTENT_DISPOSITION, "attachment; filename=%s.pdf".formatted(details.getName()))
+                .header(CONTENT_DISPOSITION, contentDisposition.toString())
                 .contentLength(result.getSize())
                 .contentType(APPLICATION_PDF)
                 .body(resource);
