@@ -24,6 +24,8 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <postgresqldriver.version>42.7.5</postgresqldriver.version>
         <snakeyaml.version>2.4</snakeyaml.version>
+        <minio.version>8.5.17</minio.version>
+        <flying-saucer-pdf.version>9.12.0</flying-saucer-pdf.version>
     </properties>
 
     <dependencies>
@@ -46,7 +48,6 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-tomcat</artifactId>
-            <version>3.4.3</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -76,13 +77,13 @@
         <dependency>
             <groupId>io.minio</groupId>
             <artifactId>minio</artifactId>
-            <version>8.5.17</version>
+            <version>${minio.version}</version>
         </dependency>
         <!-- https://mvnrepository.com/artifact/org.xhtmlrenderer/flying-saucer-pdf -->
         <dependency>
             <groupId>org.xhtmlrenderer</groupId>
             <artifactId>flying-saucer-pdf</artifactId>
-            <version>9.12.0</version>
+            <version>${flying-saucer-pdf.version}</version>
         </dependency>
     </dependencies>
     <build>
